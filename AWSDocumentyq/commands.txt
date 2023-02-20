@@ -12,3 +12,9 @@ yq w -i /etc/otel/collector/agent_config.yaml processors.resource.add_dimensions
 yq w -i /etc/otel/collector/agent_config.yaml processors.resource.add_dimensions.attributes.[1].key "env"
 yq w -i /etc/otel/collector/agent_config.yaml processors.resource.add_dimensions.attributes.[1].value "prod"
 yq w -i /etc/otel/collector/agent_config.yaml processors.resource.add_dimensions.attributes.[0].value "${host.hostname}"
+yq eval -i 'del(.connections[].queries)' oracle.yaml
+yq e '.connections[].queries' agent_config.yaml
+
+
+yq eval '.extensions += [{"file_storage/checkpoint": {"directory": "/var/log/", "timeout": "1s", "compaction": {"on_start": true, "directory": "/var/slow", "mx_ts_s": 653}}}]' -i agent_config.yaml
+
